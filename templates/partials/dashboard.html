@@ -1,0 +1,26 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="text-center mt-3 mb-3">
+        <a href="{{url_for('home')}}">Dashboard</a>/{{ dash_name }}
+      </h1>
+    </div>
+  </div>
+  <div class="row container m-auto">
+    <div class="col-12">
+      <h2 class="">Minhas Tabelas</h2>
+      {% for dash_info in dash_infos %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ dash_info.name }}</h5>
+          <p class="card-text">{{ dash_info.description }}</p>
+          <a href="{{ url_for('tables') }}" class="btn btn-primary"
+            >{% if dash_type == 'sheets': %}Ver as Tabelas{% else %}Editar{%
+            endif %}</a
+          >
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
