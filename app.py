@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 import datetime as dt
 
@@ -27,72 +27,64 @@ class Table(db.Model):
 with app.app_context():
     db.create_all()
 
-    sheets = [
-        {
-            "id": 1,
-            "name": "Planejamento Letivo 2023",
-            "description": "Organização para o planejamento letivo de 2023",
-            "url_sheet": "https://google.sheets/1/",
-        },
-        {
-            "id": 2,
-            "name": "Planejamento Letivo 2022",
-            "description": "Já terminado!",
-            "url_sheet": "https://google.sheets/2/",
-        },
-    ]
+    # sheets = [
+    #     {
+    #         "id": 1,
+    #         "name": "Planejamento Letivo 2023",
+    #         "description": "Organização para o planejamento letivo de 2023",
+    #         "url_sheet": "https://google.sheets/1/",
+    #     },
+    #     {
+    #         "id": 2,
+    #         "name": "Planejamento Letivo 2022",
+    #         "description": "Já terminado!",
+    #         "url_sheet": "https://google.sheets/2/",
+    #     },
+    # ]
 
-    tables = [
-        {
-            "id": 1,
-            "name": "Matemática",
-            "range": "A1:M",
-            "sheet_id": 1,
-        },
-        {
-            "id": 2,
-            "name": "Artes",
-            "range": "A1:M",
-            "sheet_id": 1,
-        },
-    ]
+    # tables = [
+    #     {
+    #         "id": 1,
+    #         "name": "Matemática",
+    #         "range": "A1:M",
+    #         "sheet_id": 1,
+    #     },
+    #     {
+    #         "id": 2,
+    #         "name": "Artes",
+    #         "range": "A1:M",
+    #         "sheet_id": 1,
+    #     },
+    # ]
 
-    for sheet in sheets:
-        db.session.add(
-            Sheet(
-                id=sheet["id"],
-                name=sheet["name"],
-                description=sheet["description"],
-                url_sheet=sheet["url_sheet"],
-            )
-        )
+    # for sheet in sheets:
+    #     db.session.add(
+    #         Sheet(
+    #             id=sheet["id"],
+    #             name=sheet["name"],
+    #             description=sheet["description"],
+    #             url_sheet=sheet["url_sheet"],
+    #         )
+    #     )
 
-    db.session.commit()
+    # db.session.commit()
 
-    for table in tables:
-        db.session.add(
-            Table(
-                id=table["id"],
-                name=table["name"],
-                range=table["range"],
-                sheet_id=table["sheet_id"],
-            )
-        )
+    # for table in tables:
+    #     db.session.add(
+    #         Table(
+    #             id=table["id"],
+    #             name=table["name"],
+    #             range=table["range"],
+    #             sheet_id=table["sheet_id"],
+    #         )
+    #     )
 
-    db.session.commit()
+    # db.session.commit()
 
 
 @app.route("/")
 def home():
-    # sheets = db.session.execute(db.select(Sheet).order_by(Sheet.created)).scalars()
-
-    sheets = [
-        {
-            "name": "Planejamento Letivo 2023",
-            "description": "Organização para o planejamento letivo de 2023",
-        },
-        {"name": "Planejamento Letivo 2022", "description": "Já terminado!"},
-    ]
+    sheets = db.session.execute(db.select(Sheet).order_by(Sheet.created)).scalars()
 
     return render_template(
         "pages/dashboard_page.html",
@@ -104,25 +96,19 @@ def home():
 
 @app.route("/tables/")
 def tables():
+    sheet_id = request.args.get("sheet_id", "")
+    sheet_name = (
+        db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar().name
+    )
 
-    tables = [
-        {
-            "name": "Matemática",
-            "range": "A1:M",
-            "sheet_id": 1,
-        },
-        {
-            "name": "Artes",
-            "range": "A1:M",
-            "sheet_id": 1,
-        },
-    ]
+    tables = db.session.execute(db.select(Table).filter_by(sheet_id=sheet_id)).scalars()
 
     return render_template(
         "pages/dashboard_page.html",
         dash_infos=tables,
         dash_name="Tabelas",
         dash_type="tables",
+        sheet_name=sheet_name,
     )
 
 
