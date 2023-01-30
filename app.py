@@ -21,7 +21,7 @@ class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     range = db.Column(db.String, nullable=False)
-    sheet_id = db.Column(db.ForeignKey(Sheet.id), primary_key=True)
+    sheet_id = db.Column(db.ForeignKey(Sheet.id))
 
 
 with app.app_context():
@@ -109,6 +109,7 @@ def tables():
         dash_name="Tabelas",
         dash_type="tables",
         sheet_name=sheet_name,
+        sheet_id=sheet_id,
     )
 
 
@@ -119,15 +120,31 @@ def create_sheet():
         description = request.form["descriptionInput"]
         url_sheet = request.form["urlSheetInput"]
 
-        sheet = db.session.add(
-            Sheet(name=name, description=description, url_sheet=url_sheet)
-        )
+        sheet = Sheet(name=name, description=description, url_sheet=url_sheet)
+        db.session.add(sheet)
 
         db.session.commit()
 
         return redirect("/")
 
-    return render_template("pages/form.html")
+    return render_template("pages/sheet_form.html")
+
+
+@app.route("/table/create/", methods=["GET", "POST"])
+def create_table():
+    sheet_id = request.args.get("sheet_id", "")
+
+    if request.method == "POST":
+        name = request.form["nameInput"]
+        range = request.form["rangeInput"]
+
+        table = Table(name=name, range=range, sheet_id=sheet_id)
+        db.session.add(table)
+        db.session.commit()
+
+        return redirect(f"/tables/?sheet_id={sheet_id}")
+
+    return render_template("pages/table_form.html", sheet_id=sheet_id)
 
 
 if __name__ == "__main__":

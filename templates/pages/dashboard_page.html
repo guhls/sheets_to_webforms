@@ -17,7 +17,7 @@
         </div>
         <div class="row text-right">
             <div class="col-12">
-                <a href="{{url_for('create_sheet')}}"><i class="fa-solid fa-plus"></i>Adicionar</a>
+                <a href={% if dash_type == 'sheets': %}"{{url_for('create_sheet')}}"{% else %}"{{url_for('create_table', sheet_id=sheet_id)}}"{% endif %}><i class="fa-solid fa-plus"></i>Adicionar</a>
             </div>
         </div>
 
