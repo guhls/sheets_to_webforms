@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import datetime as dt
 
@@ -110,6 +110,24 @@ def tables():
         dash_type="tables",
         sheet_name=sheet_name,
     )
+
+
+@app.route("/sheet/create/", methods=["GET", "POST"])
+def create_sheet():
+    if request.method == "POST":
+        name = request.form["nameInput"]
+        description = request.form["descriptionInput"]
+        url_sheet = request.form["urlSheetInput"]
+
+        sheet = db.session.add(
+            Sheet(name=name, description=description, url_sheet=url_sheet)
+        )
+
+        db.session.commit()
+
+        return redirect("/")
+
+    return render_template("pages/form.html")
 
 
 if __name__ == "__main__":

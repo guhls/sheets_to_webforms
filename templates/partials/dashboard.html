@@ -3,16 +3,8 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <h1 class="text-center mt-3 mb-3">
-        <a href="{{url_for('home')}}">Dashboard</a>
-      </h1>
-    </div>
-  </div>
-  <div class="row container m-auto">
-    <div class="col-12">
-      <h2 class="">
-        {% if dash_type == 'tables': %}Minhas Tabelas de "{{ sheet_name }}" {%
-        endif %}
+      <h2 class="mb-3">
+        {% if dash_type == 'tables': %}Minhas Tabelas de "{{ sheet_name }}" {% else %} Minhas Planilhas: {%endif %}
       </h2>
       {% for dash_info in dash_infos %}
       <div class="card mb-3">

@@ -1,11 +1,29 @@
 <!-- prettier-ignore -->
 
+
 {% extends 'partials/base.html' %} 
 
 {% block title %}Dashboard{% endblock title %} 
 
-{% block content %} 
+{% block content %}
 
-    {% include 'partials/dashboard.html' %} 
+    <div class="container-fluid container m-auto">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mt-3 mb-3">
+                <a href="{{url_for('home')}}">Dashboard</a>
+                </h1>
+            </div>
+        </div>
+        <div class="row text-right">
+            <div class="col-12">
+                <a href="{{url_for('create_sheet')}}"><i class="fa-solid fa-plus"></i>Adicionar</a>
+            </div>
+        </div>
+
+        {% include 'partials/dashboard.html' %} 
+
+    </div>
+
     
 {% endblock content %}
