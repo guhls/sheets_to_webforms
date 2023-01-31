@@ -9,7 +9,18 @@
       {% for dash_info in dash_infos %}
       <div class="card mb-3">
         <div class="card-body">
-          <h5 class="card-title">{{ dash_info.name }}</h5>
+          <div class="d-flex justify-content-between">
+            <h5 class="card-title">{{ dash_info.name }}</h5>
+            <div class="text-right">
+              {% if dash_type == 'sheets': %}
+              <form method='post' action="{{url_for('delete_sheet', sheet_id=dash_info.id)}}">
+                <button type="submit" class="btn btn-link">
+                  <i class="fa-solid fa-minus text-danger"></i> Remover
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
           <p class="card-text">{{ dash_info.description }}</p>
           <a
             href="{{ url_for('tables', sheet_id=dash_info.id) }}"

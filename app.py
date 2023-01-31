@@ -130,6 +130,16 @@ def create_sheet():
     return render_template("pages/sheet_form.html")
 
 
+@app.route("/sheet/delete/<int:sheet_id>", methods=["GET", "POST"])
+def delete_sheet(sheet_id):
+    if request.method == "POST":
+        sheet = db.get_or_404(Sheet, sheet_id)
+        db.session.delete(sheet)
+        db.session.commit()
+
+    return redirect("/")
+
+
 @app.route("/table/create/", methods=["GET", "POST"])
 def create_table():
     sheet_id = request.args.get("sheet_id", "")
