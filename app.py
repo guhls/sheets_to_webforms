@@ -40,9 +40,8 @@ def home():
     )
 
 
-@app.route("/tables/")
-def tables():
-    sheet_id = request.args.get("sheet_id", "")
+@app.route("/tables/<int:sheet_id>")
+def tables(sheet_id):
     sheet_name = (
         db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar().name
     )
@@ -91,10 +90,8 @@ def delete_sheet(sheet_id):
     return redirect("/")
 
 
-@app.route("/table/create/", methods=["GET", "POST"])
-def create_table():
-    sheet_id = request.args.get("sheet_id", "")
-
+@app.route("/table/create/<int:sheet_id>", methods=["GET", "POST"])
+def create_table(sheet_id):
     if request.method == "POST":
         name = request.form["nameInput"]
         range = request.form["rangeInput"]
@@ -103,7 +100,7 @@ def create_table():
         db.session.add(table)
         db.session.commit()
 
-        return redirect(f"/tables/?sheet_id={sheet_id}")
+        return redirect(f"/tables/{sheet_id}")
 
     return render_template("pages/table_form.html", sheet_id=sheet_id)
 
