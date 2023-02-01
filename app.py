@@ -108,5 +108,16 @@ def create_table():
     return render_template("pages/table_form.html", sheet_id=sheet_id)
 
 
+@app.route("/table/delete/<int:table_id>", methods=["POST"])
+def delete_table(table_id):
+    if request.method == "POST":
+        table = db.get_or_404(Table, table_id)
+        sheet_id = table.sheet_id
+        db.session.delete(table)
+        db.session.commit()
+
+    return redirect(f"/tables/{sheet_id}")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
