@@ -27,60 +27,6 @@ class Table(db.Model):
 with app.app_context():
     db.create_all()
 
-    # sheets = [
-    #     {
-    #         "id": 1,
-    #         "name": "Planejamento Letivo 2023",
-    #         "description": "Organização para o planejamento letivo de 2023",
-    #         "url_sheet": "https://google.sheets/1/",
-    #     },
-    #     {
-    #         "id": 2,
-    #         "name": "Planejamento Letivo 2022",
-    #         "description": "Já terminado!",
-    #         "url_sheet": "https://google.sheets/2/",
-    #     },
-    # ]
-
-    # tables = [
-    #     {
-    #         "id": 1,
-    #         "name": "Matemática",
-    #         "range": "A1:M",
-    #         "sheet_id": 1,
-    #     },
-    #     {
-    #         "id": 2,
-    #         "name": "Artes",
-    #         "range": "A1:M",
-    #         "sheet_id": 1,
-    #     },
-    # ]
-
-    # for sheet in sheets:
-    #     db.session.add(
-    #         Sheet(
-    #             id=sheet["id"],
-    #             name=sheet["name"],
-    #             description=sheet["description"],
-    #             url_sheet=sheet["url_sheet"],
-    #         )
-    #     )
-
-    # db.session.commit()
-
-    # for table in tables:
-    #     db.session.add(
-    #         Table(
-    #             id=table["id"],
-    #             name=table["name"],
-    #             range=table["range"],
-    #             sheet_id=table["sheet_id"],
-    #         )
-    #     )
-
-    # db.session.commit()
-
 
 @app.route("/")
 def home():
