@@ -80,6 +80,11 @@ def create_sheet():
 def delete_sheet(sheet_id):
     if request.method == "POST":
         sheet = db.get_or_404(Sheet, sheet_id)
+        tables = db.session.execute(
+            db.select(Table).filter_by(sheet_id=sheet_id)
+        ).scalars()
+        for table in tables:
+            db.session.delete(table)
         db.session.delete(sheet)
         db.session.commit()
 
