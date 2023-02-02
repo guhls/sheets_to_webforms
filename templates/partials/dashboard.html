@@ -18,7 +18,11 @@
                   <i class="fa-solid fa-minus text-danger"></i> Remover
                 </button>
               </form>
-              
+
+              <a href={% if dash_type == 'sheets': %}"{{url_for('edit_sheet', sheet_id=dash_info.id)}}"{% endif %}>
+                  <i class="fa-solid fa-pen-to-square"></i></i>Editar
+              </a>
+
             </div>
           </div>
           <p class="card-text">{{ dash_info.description }}</p>

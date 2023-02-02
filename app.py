@@ -90,6 +90,19 @@ def delete_sheet(sheet_id):
     return redirect("/")
 
 
+@app.route("/sheet/edit/<int:sheet_id>", methods=["GET", "POST"])
+def edit_sheet(sheet_id):
+    sheet = db.get_or_404(Sheet, sheet_id)
+    if request.method == "POST":
+        sheet.name = request.form["nameInput"]
+        sheet.description = request.form["descriptionInput"]
+        sheet.url_sheet = request.form["urlSheetInput"]
+
+        db.session.commit()
+        return redirect("/")
+    return render_template("pages/sheet_edit.html", sheet=sheet)
+
+
 @app.route("/table/create/<int:sheet_id>", methods=["GET", "POST"])
 def create_table(sheet_id):
     if request.method == "POST":
