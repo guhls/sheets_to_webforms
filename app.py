@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import datetime as dt
 from auth.google.creds import get_creds
 from googleapiclient.discovery import build
@@ -163,6 +164,19 @@ def edit_table(table_id):
         db.session.commit()
         return redirect(f"/tables/{table.sheet_id}")
     return render_template("pages/table_edit.html", table=table)
+
+
+@app.route("/table/add/gsheet/<table_name>", methods=["GET", "POST"])
+def add_gsheet(table_name):
+    if request.method == "POST":
+        ...
+
+    result = db.session.execute(text("PRAGMA table_info('Geografia')")).fetchall()
+    columns = [column[1] for column in result[1:]]
+
+    return render_template(
+        "pages/gsheet_form.html", columns=columns, table_name=table_name
+    )
 
 
 if __name__ == "__main__":

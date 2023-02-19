@@ -26,11 +26,20 @@
             </div>
           </div>
           <p class="card-text">{{ dash_info.description }}</p>
+
+          {% if dash_type == 'sheets': %}
           <a
             href="{{ url_for('tables', sheet_id=dash_info.id) }}"
             class="btn btn-primary"
-            >{% if dash_type == 'sheets': %}Ver as Tabelas{% else %}Inserir registro{%
-            endif %}
+          >Ver as Tabelas
+          {% else %}
+          <a
+            href="{{ url_for('add_gsheet', table_name=dash_info.name) }}"
+            class="btn btn-primary"
+          >
+            Inserir registro
+          </a>
+          {% endif %}
           </a>
         </div>
       </div>
