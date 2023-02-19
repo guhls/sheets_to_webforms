@@ -129,5 +129,17 @@ def delete_table(table_id):
     return redirect(f"/tables/{sheet_id}")
 
 
+@app.route("/table/edit/<int:table_id>", methods=["GET", "POST"])
+def edit_table(table_id):
+    table = db.get_or_404(Table, table_id)
+    if request.method == "POST":
+        table.name = request.form["nameInput"]
+        table.range = request.form["rangeInput"]
+
+        db.session.commit()
+        return redirect(f"/tables/{table.sheet_id}")
+    return render_template("pages/table_edit.html", table=table)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
