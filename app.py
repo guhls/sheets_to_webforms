@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import datetime as dt
+from auth.google.creds import get_creds
+from googleapiclient.discovery import build
 
 
 app = Flask(__name__)
@@ -112,6 +114,28 @@ def create_table(sheet_id):
         table = Table(name=name, range=range, sheet_id=sheet_id)
         db.session.add(table)
         db.session.commit()
+
+        sheet = db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar()
+
+        service_gsheets = build("sheets", "v4", credentials=get_creds())
+        response = (
+            service_gsheets.spreadsheets()
+            .values()
+            .get(spreadsheetId=sheet.url_sheet, range=range)
+            .execute()
+        )
+
+        columns = response["values"][0]
+
+        dynamic_table = type(
+            name,
+            (db.Model,),
+            {"__tablename__": name, "id": db.Column(db.Integer, primary_key=True)},
+        )
+        for column in columns:
+            setattr(dynamic_table, column, db.Column(db.String(50)))
+
+        db.create_all()
 
         return redirect(f"/tables/{sheet_id}")
 
