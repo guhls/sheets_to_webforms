@@ -11,7 +11,7 @@
 
   <h1 class="my-3">Adicionar Registro</h1>
 
-  <form method='POST' action="{{ url_for('add_gsheet', table_name=table_name) }}">
+  <form method='POST' action="{{ url_for('add_gsheet', table_name=table_name, sheet_id=sheet_id) }}">
     
     {% for column in columns %}
         <label for="{{ column }}">{{ column }}</label>

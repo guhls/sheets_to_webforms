@@ -4,6 +4,7 @@ from sqlalchemy import text
 import datetime as dt
 from auth.google.creds import get_creds
 from googleapiclient.discovery import build
+from unidecode import unidecode
 
 
 app = Flask(__name__)
@@ -166,16 +167,58 @@ def edit_table(table_id):
     return render_template("pages/table_edit.html", table=table)
 
 
-@app.route("/table/add/gsheet/<table_name>", methods=["GET", "POST"])
-def add_gsheet(table_name):
+@app.route("/table/<int:sheet_id>/add/gsheet/<table_name>", methods=["GET", "POST"])
+def add_gsheet(sheet_id, table_name):
     if request.method == "POST":
-        ...
+        table = db.session.execute(
+            db.select(Table).filter_by(sheet_id=sheet_id)
+        ).scalar()
 
-    result = db.session.execute(text("PRAGMA table_info('Geografia')")).fetchall()
+        range = table.range
+
+        new_range = []
+        for i, value in enumerate(range.split("!")[1].split(":")):
+            if i == 0:
+                range_int = int(value[1]) + 1
+                new_range.append(f"{value[0]}{range_int}")
+            else:
+                new_range.append(value[0])
+
+        updated_range = f"{table_name}!{':'.join(new_range)}"
+
+        sheet = db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar()
+
+        service = build("sheets", "v4", credentials=get_creds())
+        result = (
+            service.spreadsheets()
+            .values()
+            .get(spreadsheetId=sheet.url_sheet, range=updated_range)
+        ).execute()["values"]
+
+        values_in_sheet = result
+        values_to_append = [[request.form[column] for column in request.form]]
+
+        values_in_sheet.extend(values_to_append)
+
+        data_ascii = [[unidecode(cell) for cell in row] for row in values_in_sheet]
+
+        service.spreadsheets().values().update(
+            spreadsheetId=sheet.url_sheet,
+            range=updated_range,
+            valueInputOption="USER_ENTERED",
+            body={"values": data_ascii},
+        ).execute()
+
+        return redirect(f"/table/{sheet_id}/add/gsheet/{table_name}")
+
+    result = db.session.execute(text(f"PRAGMA table_info('{table_name}')")).fetchall()
     columns = [column[1] for column in result[1:]]
 
     return render_template(
-        "pages/gsheet_form.html", columns=columns, table_name=table_name
+        "pages/gsheet_form.html",
+        columns=columns,
+        table_name=table_name,
+        sheet_id=sheet_id,
     )
 
 

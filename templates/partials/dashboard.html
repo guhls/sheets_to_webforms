@@ -34,7 +34,7 @@
           >Ver as Tabelas
           {% else %}
           <a
-            href="{{ url_for('add_gsheet', table_name=dash_info.name) }}"
+            href="{{ url_for('add_gsheet', table_name=dash_info.name, sheet_id=dash_info.sheet_id) }}"
             class="btn btn-primary"
           >
             Inserir registro
