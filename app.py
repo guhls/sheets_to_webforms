@@ -169,32 +169,30 @@ def edit_table(table_id):
 
 @app.route("/table/<int:sheet_id>/add/gsheet/<table_name>", methods=["GET", "POST"])
 def add_gsheet(sheet_id, table_name):
+    table = db.session.execute(db.select(Table).filter_by(sheet_id=sheet_id)).scalar()
+
+    range = table.range
+
+    new_range = []
+    for i, value in enumerate(range.split("!")[1].split(":")):
+        if i == 0:
+            range_int = int(value[1]) + 1
+            new_range.append(f"{value[0]}{range_int}")
+        else:
+            new_range.append(value[0])
+
+    updated_range = f"{table_name}!{':'.join(new_range)}"
+
+    sheet = db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar()
+
+    service = build("sheets", "v4", credentials=get_creds())
+    result = (
+        service.spreadsheets()
+        .values()
+        .get(spreadsheetId=sheet.url_sheet, range=updated_range)
+    ).execute()["values"]
+
     if request.method == "POST":
-        table = db.session.execute(
-            db.select(Table).filter_by(sheet_id=sheet_id)
-        ).scalar()
-
-        range = table.range
-
-        new_range = []
-        for i, value in enumerate(range.split("!")[1].split(":")):
-            if i == 0:
-                range_int = int(value[1]) + 1
-                new_range.append(f"{value[0]}{range_int}")
-            else:
-                new_range.append(value[0])
-
-        updated_range = f"{table_name}!{':'.join(new_range)}"
-
-        sheet = db.session.execute(db.select(Sheet).filter_by(id=sheet_id)).scalar()
-
-        service = build("sheets", "v4", credentials=get_creds())
-        result = (
-            service.spreadsheets()
-            .values()
-            .get(spreadsheetId=sheet.url_sheet, range=updated_range)
-        ).execute()["values"]
-
         values_in_sheet = result
         values_to_append = [[request.form[column] for column in request.form]]
 
@@ -211,14 +209,30 @@ def add_gsheet(sheet_id, table_name):
 
         return redirect(f"/table/{sheet_id}/add/gsheet/{table_name}")
 
-    result = db.session.execute(text(f"PRAGMA table_info('{table_name}')")).fetchall()
-    columns = [column[1] for column in result[1:]]
+    columns_tuple = db.session.execute(
+        text(f"PRAGMA table_info('{table_name}')")
+    ).fetchall()
+    columns = [column[1].strip() for column in columns_tuple[1:]]
 
     return render_template(
         "pages/gsheet_form.html",
         columns=columns,
         table_name=table_name,
         sheet_id=sheet_id,
+        last_result=result[-1],
+        columns_type={
+            "Data da Aula": "date",
+            "Local da aula": "options",
+            "Assunto apresentado na aula": "textarea",
+            "Desenvolvimento - Metodologia / Estratégia": "textarea",
+            "Avaliação de aula": "textarea",
+        },
+        option_data={
+            "Local da aula": set(
+                [row[2] for row in result if row]
+                + ["Sala de aula", "Sala de leitura", "Sala digital"]
+            )
+        },
     )
 
 
