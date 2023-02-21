@@ -29,8 +29,8 @@
           <input type="{{ columns_type.get(column, "text") }}" class="form-control" id="{{ column }}" name="{{ column }}"/>
         {% endif %}
 
-        {% if last_result: %}    
-          <p><i>{{ last_result[loop.index0] }}</i></p>
+        {% if last_result[loop.index0]: %}    
+          <a href="#" class="ultimo-valor text-decoration-underline" data-input-id="{{ column }}">{{ last_result[loop.index0] }}<i class="fa-solid fa-arrow-turn-up ml-2"></i></a>
         <hr>
         {% endif %}
         

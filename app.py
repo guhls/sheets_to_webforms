@@ -5,6 +5,7 @@ import datetime as dt
 from auth.google.creds import get_creds
 from googleapiclient.discovery import build
 from unidecode import unidecode
+import datetime as dt
 
 
 app = Flask(__name__)
@@ -194,17 +195,27 @@ def add_gsheet(sheet_id, table_name):
 
     if request.method == "POST":
         values_in_sheet = result
-        values_to_append = [[request.form[column] for column in request.form]]
+
+        date = ""
+        if request.form.get("Data da Aula"):
+            date_in_forms = request.form["Data da Aula"]
+            date_datetime = dt.datetime.strptime(date_in_forms, "%Y-%m-%d")
+            date = dt.datetime.strftime(date_datetime, "%d-%m-%Y")
+
+        values_to_append = [
+            [
+                request.form[column].strip() if column != "Data da Aula" else date
+                for column in request.form
+            ]
+        ]
 
         values_in_sheet.extend(values_to_append)
-
-        data_ascii = [[unidecode(cell) for cell in row] for row in values_in_sheet]
 
         service.spreadsheets().values().update(
             spreadsheetId=sheet.url_sheet,
             range=updated_range,
             valueInputOption="USER_ENTERED",
-            body={"values": data_ascii},
+            body={"values": values_in_sheet},
         ).execute()
 
         return redirect(f"/table/{sheet_id}/add/gsheet/{table_name}")
