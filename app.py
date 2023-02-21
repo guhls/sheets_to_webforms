@@ -196,18 +196,7 @@ def add_gsheet(sheet_id, table_name):
     if request.method == "POST":
         values_in_sheet = result
 
-        date = ""
-        if request.form.get("Data da Aula"):
-            date_in_forms = request.form["Data da Aula"]
-            date_datetime = dt.datetime.strptime(date_in_forms, "%Y-%m-%d")
-            date = dt.datetime.strftime(date_datetime, "%d-%m-%Y")
-
-        values_to_append = [
-            [
-                request.form[column].strip() if column != "Data da Aula" else date
-                for column in request.form
-            ]
-        ]
+        values_to_append = [[request.form[column].strip() for column in request.form]]
 
         values_in_sheet.extend(values_to_append)
 
