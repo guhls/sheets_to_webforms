@@ -20,11 +20,11 @@
         {% if columns_type.get(column) == 'textarea': %}
           <textarea type="text" class="form-control" id="{{ column }}" name="{{ column }}"></textarea>
         {% elif columns_type.get(column)  == 'options': %}
-          <select class="form-control">
+        <select class="form-control" id="{{ column }}" name="{{ column }}">
           {% for option in option_data.get(column) %}
-            <option>{{ option }}</option>
+            <option value="{{ option }}">{{ option }}</option>
           {% endfor %}
-          </select>  
+        </select>         
         {% else %}
           <input type="{{ columns_type.get(column, "text") }}" class="form-control" id="{{ column }}" name="{{ column }}"/>
         {% endif %}
