@@ -232,7 +232,6 @@ def add_gsheet(sheet_id, table_name):
         sheet_id=sheet_id,
         last_result=result[-1],
         columns_type={
-            "Data da Aula": "date",
             "Local da aula": "options",
             "Assunto apresentado na aula": "textarea",
             "Desenvolvimento - Metodologia / Estratégia": "textarea",
