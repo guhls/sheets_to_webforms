@@ -226,7 +226,10 @@ def add_gsheet(sheet_id, table_name):
                 [
                     row[columns.index(option)]
                     for row in result
-                    if row and len(row) >= columns.index(option) and option in columns
+                    if row
+                    and option in columns
+                    and len(row) >= columns.index(option)
+                    and row[columns.index(option)]
                 ]
                 + option_data.get(option, [])
             )
