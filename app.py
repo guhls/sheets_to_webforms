@@ -195,6 +195,11 @@ def add_gsheet(sheet_id, table_name):
         .get(spreadsheetId=sheet.url_sheet, range=updated_range)
     ).execute()["values"]
 
+    for row in result:
+        if len(row) < 12:
+            left = 12 - len(row)
+            row += left * [""]
+
     if request.method == "POST":
         values_in_sheet = result
 
