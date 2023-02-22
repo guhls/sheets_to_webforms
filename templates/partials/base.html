@@ -48,7 +48,8 @@
       const valores = document.querySelectorAll('.ultimo-valor');
       
       valores.forEach((valor) => {
-        valor.addEventListener('click', () => {
+        valor.addEventListener('click', (event) => {
+          event.preventDefault();
           const valorSelecionado = valor.innerText;
           inputs.forEach((input) => {
             if (input.id === valor.dataset.inputId) {
@@ -57,7 +58,7 @@
           });
         });
       });
-    </script>
+      </script>      
       
   </body>
 </html>
