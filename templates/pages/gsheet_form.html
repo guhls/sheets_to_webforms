@@ -24,7 +24,22 @@
           {% for option in option_data.get(column): %}
             <option value="{{ option }}">{{ option }}</option>
           {% endfor %}
-        </select>         
+          <option value="custom">Outro...</option>
+        </select>
+        <input type="text" class="form-control" id="{{ column }}-custom" name="{{ column }}-custom" style="display: none;">
+        <script>
+          document.getElementById('{{ column }}').addEventListener('change', function() {
+            var select = this;
+            var input = document.getElementById('{{ column }}-custom');
+            if (select.value === 'custom') {
+              input.style.display = 'block';
+              input.setAttribute('required', '');
+            } else {
+              input.style.display = 'none';
+              input.removeAttribute('required');
+            }
+          });
+        </script>          
         {% else %}
           <input type="{{ columns_type.get(column, "text") }}" class="form-control" id="{{ column }}" name="{{ column }}"/>
         {% endif %}

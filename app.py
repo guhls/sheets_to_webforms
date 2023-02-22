@@ -198,7 +198,13 @@ def add_gsheet(sheet_id, table_name):
     if request.method == "POST":
         values_in_sheet = result
 
-        values_to_append = [[request.form[column].strip() for column in request.form]]
+        values_to_append = [
+            [
+                request.form[column].strip()
+                for column in request.form
+                if f"{column}-custom" not in list(request.form.keys())
+            ]
+        ]
 
         values_in_sheet.extend(values_to_append)
 
