@@ -170,7 +170,9 @@ def edit_table(table_id):
 
 @app.route("/table/<int:sheet_id>/add/gsheet/<table_name>", methods=["GET", "POST"])
 def add_gsheet(sheet_id, table_name):
-    table = db.session.execute(db.select(Table).filter_by(sheet_id=sheet_id)).scalar()
+    table = db.session.execute(
+        db.select(Table).filter_by(sheet_id=sheet_id, name=table_name)
+    ).scalar()
 
     range = table.range
 
@@ -214,6 +216,22 @@ def add_gsheet(sheet_id, table_name):
     ).fetchall()
     columns = [column[1].strip() for column in columns_tuple[1:]]
 
+    option_data = {
+        "Local da aula": ["Sala de aula", "Sala de leitura", "Sala digital"],
+        "Turma": ["3° Ano A", "3° Ano B"],
+    }
+    for option in ["Local da aula", "Turma"]:
+        option_data[option] = sorted(
+            set(
+                [
+                    row[columns.index(option)]
+                    for row in result
+                    if row and len(row) >= columns.index(option) and option in columns
+                ]
+                + option_data.get(option, [])
+            )
+        )
+
     return render_template(
         "pages/gsheet_form.html",
         columns=columns,
@@ -222,16 +240,12 @@ def add_gsheet(sheet_id, table_name):
         last_result=result[-1],
         columns_type={
             "Local da aula": "options",
+            "Turma": "options",
             "Assunto apresentado na aula": "textarea",
             "Desenvolvimento - Metodologia / Estratégia": "textarea",
             "Avaliação de aula": "textarea",
         },
-        option_data={
-            "Local da aula": set(
-                [row[2] for row in result if row]
-                + ["Sala de aula", "Sala de leitura", "Sala digital"]
-            )
-        },
+        option_data=option_data,
     )
 
 
