@@ -9,12 +9,12 @@
 <div class="container">
   <h4 class="mt-3"><a href="{{url_for('home')}}"><i class="fa-solid fa-house"></i></a></h4>
 
-  <h1 class="my-3">Adicionar Registro</h1>
+  <h1 class="my-3">Adicionar Registro em "{{ table_name }}"</h1>
 
   <form method='POST' action="{{ url_for('add_gsheet', table_name=table_name, sheet_id=sheet_id) }}">
     
     {% for column in columns: %}
-      <div class="form-group">
+      <div class="form-group mb-3">
         <label for="{{ column }}"><strong>{{ column }}</strong></label>
 
         {% if columns_type.get(column) == 'textarea': %}
@@ -45,7 +45,7 @@
         {% endif %}
 
         {% if last_result[loop.index0]: %}    
-          <a href="#" class="ultimo-valor text-decoration-underline" data-input-id="{{ column }}">{{ last_result[loop.index0] }}<i class="fa-solid fa-arrow-turn-up ml-2"></i></a>
+          <a href="#" class="ultimo-valor text-decoration-none fst-italic" data-input-id="{{ column }}">{{ last_result[loop.index0] }}<i class="fa-solid fa-arrow-turn-up ms-2"></i></a>
         <hr>
         {% endif %}
         

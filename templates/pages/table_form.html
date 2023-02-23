@@ -12,7 +12,7 @@
   <h1 class="my-3">Adicionar Table</h1>
 
   <form method='POST' action="{{ url_for('create_table', sheet_id=sheet_id) }}">
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="nameInput">Nome da Tabela</label>
       <input
         type="text"
@@ -22,7 +22,7 @@
         placeholder="Informe o nome da tabela"
       />
     </div>
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="rangeInput">Intervalo</label>
       <input
         type="text"
@@ -32,7 +32,7 @@
         placeholder="Informe um Intervalo na tabela"
       />
     </div>
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="SheetIdInput">ID da planilha</label>
       <input
         type="text"
