@@ -4,7 +4,6 @@ from sqlalchemy import text
 import datetime as dt
 from auth.google.creds import get_creds
 from googleapiclient.discovery import build
-from unidecode import unidecode
 import datetime as dt
 
 
@@ -203,13 +202,19 @@ def add_gsheet(sheet_id, table_name):
     if request.method == "POST":
         values_in_sheet = result
 
-        values_to_append = [
-            [
-                request.form[column].strip()
-                for column in request.form
-                if f"{column}-custom" not in list(request.form.keys())
-            ]
-        ]
+        dct = dict(request.form)
+        for column, value in request.form.items():
+            if (
+                f"{column}-custom" in list(dct.keys())
+                and dct.get(f"{column}-custom") != ""
+            ):
+                dct.pop(column)
+            elif "custom" in column and column.replace("-custom", "") in list(
+                dct.keys()
+            ):
+                dct.pop(column)
+
+        values_to_append = [list(dct.values())]
 
         values_in_sheet.extend(values_to_append)
 
